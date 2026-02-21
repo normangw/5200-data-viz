@@ -1,0 +1,39 @@
+project:
+  type: website
+  resources:
+    - audio
+  render:
+    - "*.qmd"
+    - "*.ipynb"
+    - "!xtra"
+
+website:
+  title: "Neural Networks Project"
+  favicon: "assets/gu-logo.png"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Landing Page
+      - href: report/report.qmd
+        text: Report
+      - text: "Technical details"
+        menu: 
+          - text: Data-collection
+            href: technical-details/data-collection/main.ipynb 
+          - text: Data-cleaning
+            href: technical-details/data-cleaning/main.ipynb 
+          - text: Exploratory Data Analysis
+            href: technical-details/eda/main.ipynb 
+          - text: Neural Networks
+            href: technical-details/neural-networks/main.ipynb 
+          - text: Progress Log
+            href: technical-details/progress-log.qmd
+          - text: LLM usage Log
+            href: technical-details/llm-usage-log.qmd
+
+format:
+  html:
+    theme: yeti
+    bibliography: ./assets/references.bib
+    csl: ./assets/nature.csl
+    toc: true
