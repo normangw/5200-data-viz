@@ -19,9 +19,9 @@ website:
       - text: "Technical details"
         menu: 
           - text: Data-collection
-            href: technical-details/data-collection/main.ipynb 
+            href: technical-details/data-collection/dataclean.ipynb 
           - text: Data-cleaning
-            href: technical-details/data-cleaning/main.ipynb 
+            href: technical-details/data-cleaning/eda.ipynb 
           - text: Exploratory Data Analysis
             href: technical-details/eda/main.ipynb 
           - text: Neural Networks
