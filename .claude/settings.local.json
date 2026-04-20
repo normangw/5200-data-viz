@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 , python in anaconda navigator)",
+      "Bash(python3 * i have python on anaconda navigator i told you)",
+      "Bash(python *)"
+    ]
+  }
+}

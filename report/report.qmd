@@ -1,0 +1,336 @@
+---
+title: "Distance Doesn't Explain Price"
+subtitle: "How airline market power shapes what you pay"
+format:
+  html:
+    theme: yeti
+    toc: true
+    fig-width: 9
+    fig-height: 5
+citeproc: false
+execute:
+  echo: false
+  warning: false
+  message: false
+---
+
+```{python}
+import pandas as pd
+import numpy as np
+import json
+import matplotlib.pyplot as plt
+import matplotlib.patches as mpatches
+import matplotlib.colors as mcolors
+
+# shared style
+PALETTE = ["#2166ac", "#4393c3", "#92c5de", "#f4a582", "#d6604d", "#b2182b"]
+plt.rcParams.update({
+    "font.family": "sans-serif",
+    "axes.spines.top": False,
+    "axes.spines.right": False,
+    "figure.dpi": 150,
+})
+
+DATA = "../assets/data"
+
+scatter = pd.read_json(f"{DATA}/scatter_distance_fare.json")
+r2     = json.load(open(f"{DATA}/r2_comparison.json"))
+bubble = pd.read_json(f"{DATA}/hhi_bubble.json")
+mono   = pd.read_json(f"{DATA}/monopoly_routes.json")
+```
+
+## The Assumption We All Make
+
+When buying a plane ticket, most of us assume the price reflects the journey — longer flight, higher fare. It's intuitive. It's also only half right.
+
+Using four quarters of Bureau of Transportation Statistics ticketing data (Q3 2024 – Q2 2025), covering **25 million passenger records** across more than **80,000 routes**, we find that distance explains less than half of what you pay. The rest is something airlines rarely advertise: **market power**.
+
+---
+
+## Static View 1 — Does Distance Predict Fare?
+
+Each dot below is a US airline route. Color shows how concentrated that route is — from competitive (blue) to near-monopoly (red).
+
+```{python}
+fig, ax = plt.subplots(figsize=(9, 5))
+
+# HHI quartile color
+q = pd.qcut(scatter["HHI"], 4, labels=False)
+colors = [PALETTE[int(v)] for v in q]
+
+sc = ax.scatter(
+    scatter["AVG_DISTANCE"], scatter["AVG_FARE"],
+    c=colors, alpha=0.45, s=18, linewidths=0
+)
+
+ax.set_xlabel("Average Route Distance (miles)", fontsize=11)
+ax.set_ylabel("Average Fare (USD)", fontsize=11)
+ax.set_title("Distance vs. Fare — colored by carrier concentration (HHI)", fontsize=12, pad=10)
+
+# R² annotation
+ax.text(0.97, 0.05, "R² = 0.45", transform=ax.transAxes,
+        ha="right", fontsize=10, color="#555")
+
+# legend
+handles = [
+    mpatches.Patch(color=PALETTE[0], label="Competitive (low HHI)"),
+    mpatches.Patch(color=PALETTE[2], label="Moderate concentration"),
+    mpatches.Patch(color=PALETTE[5], label="Near-monopoly (high HHI)"),
+]
+ax.legend(handles=handles, fontsize=9, frameon=False)
+plt.tight_layout()
+plt.show()
+```
+
+Distance and fare move together — but the scatter is wide. Many short routes cost more than long ones. Notice the red dots (monopoly routes) clustering above the trend line.
+
+---
+
+## Static View 2 — How Much Does Each Factor Explain?
+
+```{python}
+fig, ax = plt.subplots(figsize=(7, 3))
+
+labels = list(r2.keys())
+values = list(r2.values())
+bar_colors = [PALETTE[1], PALETTE[3], PALETTE[5]]
+
+bars = ax.barh(labels, values, color=bar_colors, height=0.5)
+
+for bar, val in zip(bars, values):
+    ax.text(val + 0.005, bar.get_y() + bar.get_height() / 2,
+            f"{val:.1%}", va="center", fontsize=10)
+
+ax.set_xlim(0, 0.65)
+ax.set_xlabel("R² (share of fare variance explained)", fontsize=10)
+ax.set_title("What predicts airline fares?", fontsize=12)
+ax.axvline(0.5, color="#bbb", linestyle="--", linewidth=0.8)
+plt.tight_layout()
+plt.show()
+```
+
+Distance alone explains **45%** of fare variance. Adding HHI bumps that to **49%**. HHI alone only explains **15%** — but that's because high-concentration routes also tend to be longer. The key finding: **even after accounting for distance, monopoly routes charge a systematic premium**.
+
+---
+
+## Interactive View 1 — Market Power vs. Fare
+
+Explore every route: the further right a dot, the more one carrier dominates. Hover for details.
+
+```{ojs}
+//| label: hhi-bubble
+
+hhi_data = await FileAttachment("../assets/data/hhi_bubble.json").json()
+
+// carrier → color map (top 10 carriers)
+carrierColors = ({
+  WN: "#f4a582", DL: "#2166ac", AA: "#b2182b",
+  UA: "#4393c3", AS: "#92c5de", OO: "#d6604d",
+  MQ: "#762a83", YX: "#1b7837", B6: "#fddbc7", HA: "#e08214"
+})
+
+function carrierColor(c) {
+  return carrierColors[c] || "#aaa"
+}
+
+Plot.plot({
+  width: 820,
+  height: 420,
+  marginLeft: 60,
+  marginBottom: 50,
+  grid: true,
+  x: { label: "HHI (carrier concentration →)", tickFormat: d => d.toLocaleString() },
+  y: { label: "Average Fare (USD)" },
+  marks: [
+    Plot.dot(hhi_data, {
+      x: "HHI",
+      y: "AVG_FARE",
+      r: d => Math.sqrt(d.TOTAL_PASSENGERS / 500),
+      fill: d => carrierColor(d.TOP_CARRIER),
+      fillOpacity: 0.6,
+      stroke: "white",
+      strokeWidth: 0.4,
+      tip: true,
+      title: d =>
+        `${d.ROUTE}\nFare: $${d.AVG_FARE.toFixed(0)}\nHHI: ${d.HHI.toFixed(0)}\nTop carrier: ${d.TOP_CARRIER} (${(d.TOP_CARRIER_SHARE * 100).toFixed(0)}%)\nPassengers: ${d.TOTAL_PASSENGERS.toLocaleString()}`
+    }),
+    Plot.linearRegressionY(hhi_data, { x: "HHI", y: "AVG_FARE", stroke: "#555", strokeDasharray: "4 2" })
+  ],
+  caption: "Bubble size ∝ passenger volume. Dashed line = linear trend."
+})
+```
+
+---
+
+## Interactive View 2 — The Most Expensive Monopoly Routes
+
+These 20 routes combine high fares with near-monopoly control. Hover to explore.
+
+```{ojs}
+//| label: monopoly-bar
+
+mono_data = await FileAttachment("../assets/data/monopoly_routes.json").json()
+
+mono_sorted = mono_data.slice().sort((a, b) => b.AVG_FARE - a.AVG_FARE)
+
+Plot.plot({
+  width: 820,
+  height: 420,
+  marginLeft: 100,
+  marginBottom: 50,
+  x: { label: "Average Fare (USD)", grid: true },
+  y: { label: null },
+  marks: [
+    Plot.barX(mono_sorted, {
+      y: "ROUTE",
+      x: "AVG_FARE",
+      fill: d => carrierColor(d.TOP_CARRIER),
+      sort: { y: "-x" },
+      tip: true,
+      title: d =>
+        `${d.ROUTE}\nFare: $${d.AVG_FARE.toFixed(0)}\nTop carrier: ${d.TOP_CARRIER} (${(d.TOP_CARRIER_SHARE * 100).toFixed(0)}%)\nHHI: ${d.HHI.toFixed(0)}`
+    }),
+    Plot.text(mono_sorted, {
+      y: "ROUTE",
+      x: "AVG_FARE",
+      text: d => ` $${d.AVG_FARE.toFixed(0)}`,
+      dx: 3,
+      fontSize: 9,
+      sort: { y: "-x" }
+    })
+  ],
+  caption: "Color = dominant carrier. HHI ≥ 7,500 on all routes shown."
+})
+```
+
+---
+
+## Linked View — Airport Dominance Map
+
+Click any airport to see which carriers control departures from that city.
+
+```{ojs}
+//| label: linked-map
+
+airport_data = await FileAttachment("../assets/data/airport_carriers.json").json()
+
+// filter to continental US
+us_airports = airport_data.filter(d => d.LON > -130 && d.LON < -60 && d.LAT > 24 && d.LAT < 50)
+
+viewof selected = Inputs.select(
+  us_airports.map(d => d.AIRPORT).sort(),
+  { label: "Select airport (or click map below)", value: "ATL" }
+)
+```
+
+```{ojs}
+// Map
+map_plot = Plot.plot({
+  width: 820,
+  height: 380,
+  projection: { type: "albers-usa" },
+  marks: [
+    Plot.geo(await fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json").then(r => r.json()).then(t => topojson.feature(t, t.objects.states)), {
+      stroke: "#ccc", fill: "#f5f5f5", strokeWidth: 0.5
+    }),
+    Plot.dot(us_airports, {
+      x: "LON", y: "LAT",
+      r: d => Math.sqrt(d.TOTAL_PAX / 200000),
+      fill: d => d.AIRPORT === selected ? "#b2182b" : "#4393c3",
+      fillOpacity: d => d.AIRPORT === selected ? 1 : 0.55,
+      stroke: "white",
+      strokeWidth: 0.5,
+      tip: true,
+      title: d => `${d.AIRPORT}\nPassengers: ${d.TOTAL_PAX.toLocaleString()}`
+    })
+  ]
+})
+
+map_plot
+```
+
+```{ojs}
+// Bar chart for selected airport
+airport_detail = us_airports.find(d => d.AIRPORT === selected)
+
+carrier_plot = airport_detail
+  ? Plot.plot({
+      width: 820,
+      height: 260,
+      marginLeft: 60,
+      x: { label: "Passenger share", domain: [0, 1], tickFormat: "%", grid: true },
+      y: { label: "Carrier" },
+      marks: [
+        Plot.barX(airport_detail.carriers, {
+          y: "carrier",
+          x: "share",
+          fill: d => carrierColor(d.carrier),
+          sort: { y: "-x" },
+          tip: true,
+          title: d => `${d.carrier}: ${(d.share * 100).toFixed(1)}%`
+        }),
+        Plot.text(airport_detail.carriers, {
+          y: "carrier",
+          x: "share",
+          text: d => ` ${(d.share * 100).toFixed(1)}%`,
+          dx: 3,
+          fontSize: 10,
+          sort: { y: "-x" }
+        })
+      ],
+      caption: `Carrier market share at ${selected} by passenger volume`
+    })
+  : html`<p>No data for selected airport.</p>`
+
+carrier_plot
+```
+
+---
+
+## Infographic — What Explains Your Ticket Price?
+
+```{=html}
+<div style="display:flex; gap:16px; flex-wrap:wrap; margin:2rem 0; font-family:sans-serif;">
+
+  <div style="flex:1; min-width:160px; background:#2166ac; color:white; border-radius:10px; padding:24px 20px; text-align:center;">
+    <div style="font-size:2.8rem; font-weight:700;">45%</div>
+    <div style="font-size:1rem; margin-top:6px;">Distance</div>
+    <div style="font-size:0.8rem; margin-top:8px; opacity:0.85;">Longer routes cost more — but not as much as you'd expect</div>
+  </div>
+
+  <div style="flex:1; min-width:160px; background:#d6604d; color:white; border-radius:10px; padding:24px 20px; text-align:center;">
+    <div style="font-size:2.8rem; font-weight:700;">+4%</div>
+    <div style="font-size:1rem; margin-top:6px;">Market Power</div>
+    <div style="font-size:0.8rem; margin-top:8px; opacity:0.85;">Carrier concentration adds a premium on top of distance</div>
+  </div>
+
+  <div style="flex:1; min-width:160px; background:#555; color:white; border-radius:10px; padding:24px 20px; text-align:center;">
+    <div style="font-size:2.8rem; font-weight:700;">51%</div>
+    <div style="font-size:1rem; margin-top:6px;">Unexplained</div>
+    <div style="font-size:0.8rem; margin-top:8px; opacity:0.85;">Seasonality, seat class, booking timing, fuel costs…</div>
+  </div>
+
+</div>
+
+<div style="display:flex; gap:16px; flex-wrap:wrap; margin:1rem 0 2rem; font-family:sans-serif;">
+
+  <div style="flex:1; min-width:200px; background:#f0f4f8; border-left:4px solid #2166ac; border-radius:6px; padding:16px 18px;">
+    <div style="font-size:0.75rem; color:#666; text-transform:uppercase; letter-spacing:0.05em;">Most competitive route</div>
+    <div style="font-size:1.3rem; font-weight:600; margin-top:4px;">ATL ↔ ORD</div>
+    <div style="font-size:0.9rem; color:#444;">6 carriers · avg $178</div>
+  </div>
+
+  <div style="flex:1; min-width:200px; background:#f0f4f8; border-left:4px solid #b2182b; border-radius:6px; padding:16px 18px;">
+    <div style="font-size:0.75rem; color:#666; text-transform:uppercase; letter-spacing:0.05em;">Worst monopoly route</div>
+    <div style="font-size:1.3rem; font-weight:600; margin-top:4px;">EWR ↔ HNL</div>
+    <div style="font-size:0.9rem; color:#444;">United 88% share · avg $570</div>
+  </div>
+
+</div>
+```
+
+---
+
+## Data & Methods
+
+Data: BTS DB1B Market, Q3 2024 – Q2 2025. Fares filtered to remove outliers (IQR method, price-per-mile floor). Carrier concentration measured using the Herfindahl-Hirschman Index (HHI) computed from passenger share per route. Regression on log-transformed route-level average fares. Full methodology in the [Technical Appendix](../technical-details/story/main.ipynb).
