@@ -79,7 +79,7 @@ sc = ax.scatter(
 
 ax.set_xlabel("Average Route Distance (miles)", fontsize=11)
 ax.set_ylabel("Average Fare (USD)", fontsize=11)
-ax.set_title("Distance vs. Fare — colored by carrier concentration (HHI)", fontsize=12, pad=10)
+ax.set_title("Distance vs. Fare — colored by _carrier_ concentration (HHI)", fontsize=12, pad=10)
 
 # R² annotation
 ax.text(0.97, 0.05, "R² = 0.45", transform=ax.transAxes,
