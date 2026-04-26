@@ -121,7 +121,7 @@ route_options = sorted(route_summary["ROUTE_LABEL"].dropna().unique())
 tab1, tab2, tab3 = st.tabs([
     "Overview",
     "Route Comparison",
-    "AI Route Summary",
+    "AI Route Summary + Recommendation",
 ])
 
 
@@ -176,7 +176,10 @@ with tab1:
             },
             labels={
                 "avg_distance": "Distance (miles)",
-                "avg_fare": "Average Fare ($)"
+                "avg_fare": "Average Fare ($)",
+                "median_fare": "Median Fare ($)",
+                "min_fare": "Minimum Fare ($)",
+                "max_fare": "Maximum Fare ($)",
             },
             title=f"Average Fare vs Distance | Min Observations: {obs_filter}"
         )
@@ -187,6 +190,8 @@ with tab1:
                 line=dict(width=0.4, color="gray")
             )
         )
+
+        
 
         st.plotly_chart(fig_scatter, use_container_width=True)
 
@@ -202,14 +207,26 @@ with tab1:
         y="ROUTE_LABEL",
         orientation="h",
         color="avg_distance",
+        hover_name=None,  # 👈 removes default bold title
+        hover_data={
+            "ROUTE_LABEL": False,
+            "avg_fare": ":.2f",
+            "avg_distance": ":.0f"
+       },
         labels={
             "avg_fare": "Average Fare ($)",
-            "ROUTE_LABEL": "Route"
+            "avg_distance": "Distance (miles)"
         },
         title="Most Expensive Routes"
     )
 
-    fig_bar.update_layout(yaxis={"categoryorder": "total ascending"})
+    fig_bar.update_layout(
+        yaxis={"categoryorder": "total ascending"},
+        coloraxis_colorbar=dict(
+            title="Distance (miles)"
+        )
+    )
+
     st.plotly_chart(fig_bar, use_container_width=True)
 
 
@@ -315,10 +332,10 @@ Do not use "Route A" or "Route B" in your response. Use the actual name of the i
 
 
 with tab3:
-    st.header("AI Route Summary")
+    st.header("AI Route Summary and Recommendation")
 
     st.write(
-    "Choose the two routes you want to compare and click the button to receive an AI-generated recommendation on which flight route is better. ")
+    "Choose the two routes you want to compare and click the button to receive an AI-generated flight route recommendation.")
 
     route_a = st.selectbox("Route 1", route_options, key="ai_a")
     route_b = st.selectbox("Route 2", route_options, key="ai_b", index=1)
