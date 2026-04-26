@@ -20,10 +20,19 @@ import numpy as np
 import json
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-import matplotlib.colors as mcolors
+import plotly.express as px
+import plotly.graph_objects as go
+import plotly.io as pio
 
-# shared style
+pio.renderers.default = "plotly_mimetype+notebook_connected"
+
 PALETTE = ["#2166ac", "#4393c3", "#92c5de", "#f4a582", "#d6604d", "#b2182b"]
+CARRIER_COLORS = {
+    "WN": "#f4a582", "DL": "#2166ac", "AA": "#b2182b",
+    "UA": "#4393c3", "AS": "#92c5de", "OO": "#d6604d",
+    "MQ": "#762a83", "YX": "#1b7837", "B6": "#fddbc7", "HA": "#e08214",
+}
+
 plt.rcParams.update({
     "font.family": "sans-serif",
     "axes.spines.top": False,
@@ -33,10 +42,15 @@ plt.rcParams.update({
 
 DATA = "../assets/data"
 
-scatter = pd.read_json(f"{DATA}/scatter_distance_fare.json")
-r2     = json.load(open(f"{DATA}/r2_comparison.json"))
-bubble = pd.read_json(f"{DATA}/hhi_bubble.json")
-mono   = pd.read_json(f"{DATA}/monopoly_routes.json")
+scatter  = pd.read_json(f"{DATA}/scatter_distance_fare.json")
+r2       = json.load(open(f"{DATA}/r2_comparison.json"))
+bubble   = pd.read_json(f"{DATA}/hhi_bubble.json")
+mono     = pd.read_json(f"{DATA}/monopoly_routes.json")
+airports = pd.read_json(f"{DATA}/airport_carriers.json")
+airports = airports[
+    (airports.LON > -130) & (airports.LON < -60) &
+    (airports.LAT > 24)   & (airports.LAT < 50)
+].copy()
 ```
 
 ## The Assumption We All Make
@@ -117,47 +131,55 @@ Distance alone explains **45%** of fare variance. Adding HHI bumps that to **49%
 
 Explore every route: the further right a dot, the more one carrier dominates. Hover for details.
 
-```{ojs}
-//| label: hhi-bubble
+```{python}
+bubble["color"] = bubble["TOP_CARRIER"].map(CARRIER_COLORS).fillna("#aaa")
+bubble["size"]  = (bubble["TOTAL_PASSENGERS"] / bubble["TOTAL_PASSENGERS"].max() * 30 + 4).clip(4, 34)
+bubble["label"] = (
+    bubble["ROUTE"] + "<br>Fare: $" + bubble["AVG_FARE"].round(0).astype(int).astype(str) +
+    "<br>HHI: " + bubble["HHI"].round(0).astype(int).astype(str) +
+    "<br>Top carrier: " + bubble["TOP_CARRIER"] +
+    " (" + (bubble["TOP_CARRIER_SHARE"]*100).round(1).astype(str) + "%)" +
+    "<br>Passengers: " + bubble["TOTAL_PASSENGERS"].astype(int).apply(lambda x: f"{x:,}")
+)
 
-hhi_data = await FileAttachment("../assets/data/hhi_bubble.json").json()
+fig1 = go.Figure()
+for carrier, grp in bubble.groupby("TOP_CARRIER"):
+    fig1.add_trace(go.Scatter(
+        x=grp["HHI"], y=grp["AVG_FARE"],
+        mode="markers",
+        name=carrier,
+        marker=dict(
+            size=grp["size"],
+            color=CARRIER_COLORS.get(carrier, "#aaa"),
+            opacity=0.6,
+            line=dict(width=0.4, color="white"),
+        ),
+        hovertemplate=grp["label"] + "<extra>" + carrier + "</extra>",
+        text=grp["label"],
+    ))
 
-// carrier → color map (top 10 carriers)
-carrierColors = ({
-  WN: "#f4a582", DL: "#2166ac", AA: "#b2182b",
-  UA: "#4393c3", AS: "#92c5de", OO: "#d6604d",
-  MQ: "#762a83", YX: "#1b7837", B6: "#fddbc7", HA: "#e08214"
-})
+# trendline
+m = np.polyfit(bubble["HHI"], bubble["AVG_FARE"], 1)
+x_line = np.linspace(bubble["HHI"].min(), bubble["HHI"].max(), 200)
+fig1.add_trace(go.Scatter(
+    x=x_line, y=np.polyval(m, x_line),
+    mode="lines", name="Trend",
+    line=dict(color="#555", dash="dash", width=1.5),
+    hoverinfo="skip",
+))
 
-function carrierColor(c) {
-  return carrierColors[c] || "#aaa"
-}
-
-Plot.plot({
-  width: 820,
-  height: 420,
-  marginLeft: 60,
-  marginBottom: 50,
-  grid: true,
-  x: { label: "HHI (carrier concentration →)", tickFormat: d => d.toLocaleString() },
-  y: { label: "Average Fare (USD)" },
-  marks: [
-    Plot.dot(hhi_data, {
-      x: "HHI",
-      y: "AVG_FARE",
-      r: d => Math.sqrt(d.TOTAL_PASSENGERS / 500),
-      fill: d => carrierColor(d.TOP_CARRIER),
-      fillOpacity: 0.6,
-      stroke: "white",
-      strokeWidth: 0.4,
-      tip: true,
-      title: d =>
-        `${d.ROUTE}\nFare: $${d.AVG_FARE.toFixed(0)}\nHHI: ${d.HHI.toFixed(0)}\nTop carrier: ${d.TOP_CARRIER} (${(d.TOP_CARRIER_SHARE * 100).toFixed(0)}%)\nPassengers: ${d.TOTAL_PASSENGERS.toLocaleString()}`
-    }),
-    Plot.linearRegressionY(hhi_data, { x: "HHI", y: "AVG_FARE", stroke: "#555", strokeDasharray: "4 2" })
-  ],
-  caption: "Bubble size ∝ passenger volume. Dashed line = linear trend."
-})
+fig1.update_layout(
+    xaxis_title="HHI (carrier concentration →)",
+    yaxis_title="Average Fare (USD)",
+    legend_title="Top Carrier",
+    height=460,
+    margin=dict(l=60, r=20, t=20, b=50),
+    plot_bgcolor="white",
+    paper_bgcolor="white",
+)
+fig1.update_xaxes(showgrid=True, gridcolor="#eee", tickformat=",")
+fig1.update_yaxes(showgrid=True, gridcolor="#eee")
+fig1.show()
 ```
 
 ---
@@ -166,41 +188,35 @@ Plot.plot({
 
 These 20 routes combine high fares with near-monopoly control. Hover to explore.
 
-```{ojs}
-//| label: monopoly-bar
+```{python}
+mono_s = mono.sort_values("AVG_FARE", ascending=True).copy()
+mono_s["color"]   = mono_s["TOP_CARRIER"].map(CARRIER_COLORS).fillna("#aaa")
+mono_s["tooltip"] = (
+    mono_s["ROUTE"] + "<br>Fare: $" + mono_s["AVG_FARE"].round(0).astype(int).astype(str) +
+    "<br>Carrier: " + mono_s["TOP_CARRIER"] +
+    " (" + (mono_s["TOP_CARRIER_SHARE"]*100).round(1).astype(str) + "%)" +
+    "<br>HHI: " + mono_s["HHI"].round(0).astype(int).astype(str)
+)
 
-mono_data = await FileAttachment("../assets/data/monopoly_routes.json").json()
+fig2 = go.Figure(go.Bar(
+    x=mono_s["AVG_FARE"],
+    y=mono_s["ROUTE"],
+    orientation="h",
+    marker_color=mono_s["color"],
+    text=mono_s["AVG_FARE"].round(0).astype(int).apply(lambda v: f"${v}"),
+    textposition="outside",
+    hovertemplate=mono_s["tooltip"] + "<extra></extra>",
+))
 
-mono_sorted = mono_data.slice().sort((a, b) => b.AVG_FARE - a.AVG_FARE)
-
-Plot.plot({
-  width: 820,
-  height: 420,
-  marginLeft: 100,
-  marginBottom: 50,
-  x: { label: "Average Fare (USD)", grid: true },
-  y: { label: null },
-  marks: [
-    Plot.barX(mono_sorted, {
-      y: "ROUTE",
-      x: "AVG_FARE",
-      fill: d => carrierColor(d.TOP_CARRIER),
-      sort: { y: "-x" },
-      tip: true,
-      title: d =>
-        `${d.ROUTE}\nFare: $${d.AVG_FARE.toFixed(0)}\nTop carrier: ${d.TOP_CARRIER} (${(d.TOP_CARRIER_SHARE * 100).toFixed(0)}%)\nHHI: ${d.HHI.toFixed(0)}`
-    }),
-    Plot.text(mono_sorted, {
-      y: "ROUTE",
-      x: "AVG_FARE",
-      text: d => ` $${d.AVG_FARE.toFixed(0)}`,
-      dx: 3,
-      fontSize: 9,
-      sort: { y: "-x" }
-    })
-  ],
-  caption: "Color = dominant carrier. HHI ≥ 7,500 on all routes shown."
-})
+fig2.update_layout(
+    xaxis_title="Average Fare (USD)",
+    height=480,
+    margin=dict(l=80, r=60, t=20, b=50),
+    plot_bgcolor="white",
+    paper_bgcolor="white",
+)
+fig2.update_xaxes(showgrid=True, gridcolor="#eee")
+fig2.show()
 ```
 
 ---
@@ -209,80 +225,104 @@ Plot.plot({
 
 Click any airport to see which carriers control departures from that city.
 
-```{ojs}
-//| label: linked-map
-
-airport_data = await FileAttachment("../assets/data/airport_carriers.json").json()
-
-// filter to continental US
-us_airports = airport_data.filter(d => d.LON > -130 && d.LON < -60 && d.LAT > 24 && d.LAT < 50)
-
-viewof selected = Inputs.select(
-  us_airports.map(d => d.AIRPORT).sort(),
-  { label: "Select airport (or click map below)", value: "ATL" }
+```{python}
+# Top 50 airports by passengers for the dropdown
+top50 = airports.nlargest(50, "TOTAL_PAX").reset_index(drop=True)
+top50["AIRPORT_HHI"] = top50["carriers"].apply(
+    lambda cs: sum(c["share"]**2 for c in cs) * 10_000
 )
-```
+top50["dot_size"] = (top50["TOTAL_PAX"] / top50["TOTAL_PAX"].max() * 22 + 5).clip(5, 27)
 
-```{ojs}
-// Map
-map_plot = Plot.plot({
-  width: 820,
-  height: 380,
-  projection: { type: "albers-usa" },
-  marks: [
-    Plot.geo(await fetch("https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json").then(r => r.json()).then(t => topojson.feature(t, t.objects.states)), {
-      stroke: "#ccc", fill: "#f5f5f5", strokeWidth: 0.5
-    }),
-    Plot.dot(us_airports, {
-      x: "LON", y: "LAT",
-      r: d => Math.sqrt(d.TOTAL_PAX / 200000),
-      fill: d => d.AIRPORT === selected ? "#b2182b" : "#4393c3",
-      fillOpacity: d => d.AIRPORT === selected ? 1 : 0.55,
-      stroke: "white",
-      strokeWidth: 0.5,
-      tip: true,
-      title: d => `${d.AIRPORT}\nPassengers: ${d.TOTAL_PAX.toLocaleString()}`
-    })
-  ]
-})
+default_idx = top50[top50["AIRPORT"] == "ATL"].index[0] if "ATL" in top50["AIRPORT"].values else 0
+default_ap  = top50.iloc[default_idx]["AIRPORT"]
 
-map_plot
-```
+# --- Map trace ---
+map_trace = go.Scattergeo(
+    lon=top50["LON"], lat=top50["LAT"],
+    text=top50["AIRPORT"],
+    customdata=top50.index,
+    mode="markers",
+    marker=dict(
+        size=top50["dot_size"],
+        color=top50["AIRPORT_HHI"],
+        colorscale=[[0,"#2166ac"],[0.5,"#f4a582"],[1,"#b2182b"]],
+        colorbar=dict(title="HHI", x=1.01, len=0.6),
+        line=dict(width=0.5, color="white"),
+        opacity=0.8,
+    ),
+    hovertemplate="<b>%{text}</b><br>HHI: %{marker.color:.0f}<extra></extra>",
+    showlegend=False,
+)
 
-```{ojs}
-// Bar chart for selected airport
-airport_detail = us_airports.find(d => d.AIRPORT === selected)
+# --- One bar trace per airport (toggle visibility via dropdown) ---
+bar_traces = []
+for _, row in top50.iterrows():
+    carriers_sorted = sorted(row["carriers"], key=lambda c: -c["share"])
+    bar_traces.append(go.Bar(
+        x=[c["share"] for c in carriers_sorted],
+        y=[c["carrier"] for c in carriers_sorted],
+        orientation="h",
+        marker_color=[CARRIER_COLORS.get(c["carrier"], "#aaa") for c in carriers_sorted],
+        text=[f'{c["share"]*100:.1f}%' for c in carriers_sorted],
+        textposition="outside",
+        hovertemplate="%{y}: %{x:.1%}<extra></extra>",
+        visible=(_ == default_idx),
+        showlegend=False,
+        xaxis="x2", yaxis="y2",
+    ))
 
-carrier_plot = airport_detail
-  ? Plot.plot({
-      width: 820,
-      height: 260,
-      marginLeft: 60,
-      x: { label: "Passenger share", domain: [0, 1], tickFormat: "%", grid: true },
-      y: { label: "Carrier" },
-      marks: [
-        Plot.barX(airport_detail.carriers, {
-          y: "carrier",
-          x: "share",
-          fill: d => carrierColor(d.carrier),
-          sort: { y: "-x" },
-          tip: true,
-          title: d => `${d.carrier}: ${(d.share * 100).toFixed(1)}%`
-        }),
-        Plot.text(airport_detail.carriers, {
-          y: "carrier",
-          x: "share",
-          text: d => ` ${(d.share * 100).toFixed(1)}%`,
-          dx: 3,
-          fontSize: 10,
-          sort: { y: "-x" }
-        })
-      ],
-      caption: `Carrier market share at ${selected} by passenger volume`
-    })
-  : html`<p>No data for selected airport.</p>`
+# Dropdown buttons: toggle bar trace visibility + update title
+buttons = []
+for i, row in top50.iterrows():
+    vis = [True] + [j == i for j in top50.index]
+    buttons.append(dict(
+        method="update",
+        label=row["AIRPORT"],
+        args=[
+            {"visible": vis},
+            {"annotations": [dict(
+                text=f"Carrier share at {row['AIRPORT']}",
+                x=0.5, y=0.42, xref="paper", yref="paper",
+                showarrow=False, font=dict(size=12),
+            )]}
+        ],
+    ))
 
-carrier_plot
+fig3 = go.Figure(data=[map_trace] + bar_traces)
+
+fig3.update_layout(
+    geo=dict(
+        scope="usa",
+        projection_type="albers usa",
+        showland=True, landcolor="#f5f5f5",
+        showlakes=True, lakecolor="#d0e8f5",
+        showcountries=False,
+        showsubunits=True, subunitcolor="#ddd",
+        domain=dict(x=[0,1], y=[0.45,1]),
+    ),
+    xaxis2=dict(domain=[0.05,0.95], anchor="y2", tickformat=".0%",
+                title="Passenger share", showgrid=True, gridcolor="#eee"),
+    yaxis2=dict(domain=[0,0.38], anchor="x2"),
+    updatemenus=[dict(
+        type="dropdown",
+        buttons=buttons,
+        x=0.01, xanchor="left",
+        y=0.41, yanchor="top",
+        bgcolor="white",
+        bordercolor="#ccc",
+    )],
+    annotations=[dict(
+        text=f"Carrier share at {default_ap}",
+        x=0.5, y=0.42, xref="paper", yref="paper",
+        showarrow=False, font=dict(size=12),
+    )],
+    height=720,
+    margin=dict(l=20, r=60, t=20, b=20),
+    plot_bgcolor="white",
+    paper_bgcolor="white",
+)
+
+fig3.show()
 ```
 
 ---
