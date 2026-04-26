@@ -7,13 +7,13 @@ figure.facecolor: "#ffffff"
 axes.facecolor: "#ffffff"
 axes.edgecolor: "#dddddd"
 axes.linewidth: 0.8
-axes.grid: False
+axes.grid: False # gridlines. cleaner with or without them?
 axes.titlesize: 16
 axes.titleweight: bold
 axes.labelsize: 12
 axes.labelcolor: "#333333"
 
-# --- Grid ---
+# --- Grid --- only relevant if we keep them
 grid.color: "#e6e6e6"
 grid.linestyle: -
 grid.linewidth: 0.8
