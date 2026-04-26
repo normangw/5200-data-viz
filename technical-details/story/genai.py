@@ -1,15 +1,13 @@
 import json
 import os
 import pandas as pd
+import numpy as np
 import streamlit as st
 import plotly.express as px
 from groq import Groq
 
 
-# -----------------------------
-# Groq Setup
-# -----------------------------
-
+# api key load
 def load_api_key() -> str:
     with open(os.path.expanduser("~/.api-keys.json")) as f:
         return json.load(f)["groq-final"]
@@ -18,26 +16,46 @@ def load_api_key() -> str:
 client = Groq(api_key=load_api_key())
 
 
-# -----------------------------
-# Streamlit Setup
-# -----------------------------
-
+# streamlit app
 st.set_page_config(
     page_title="Flight Price & Route Explorer",
     page_icon="✈️",
     layout="wide"
 )
 
-st.title("✈️ Flight Price & Route Explorer")
+st.title("Flight Price & Route Explorer")
 st.write(
-    "Explore how flight prices relate to distance and route characteristics."
+    "Explore how flight prices relate to distance and compare routes to each other."
 )
 
 
-# -----------------------------
-# Load Pre-Aggregated Data
-# -----------------------------
+## CSS STYLING
+st.markdown(
+    """
+    <style>
+    /* Filled track */
+    div[data-baseweb="slider"] > div > div > div {
+        background-color: #4A90E2 !important;
+    }
 
+    /* Slider handle (the circle) */
+    div[data-baseweb="slider"] [role="slider"] {
+        background-color: #4A90E2 !important;
+        border-color: #4A90E2 !important;
+    }
+
+    /* Slider value (the red number) */
+    div[data-baseweb="slider"] div {
+        color: #31333F !important;  /* 👈 match your text color */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+
+
+## LOAD AGGERGATED DATA
 @st.cache_data
 def load_data(file_path):
     df = pd.read_csv(file_path)
@@ -64,11 +82,11 @@ def load_data(file_path):
     return df
 
 
-DATA_PATH = '/Volumes/Extreme Pro/DSAN-5200/final-project/route_summary.csv'
+DATA_PATH = '../../assets/data/route_summary.csv'
 route_summary = load_data(DATA_PATH)
 
 
-airport_df = pd.read_csv("../../assets/data/airports.csv")
+airport_df = pd.read_csv("../../assets/data/airport-codes.csv")
 
 # Merge for ORIGIN
 route_summary = route_summary.merge(
@@ -77,8 +95,8 @@ route_summary = route_summary.merge(
     right_on="iata_code",
     how="left"
 ).rename(columns={
-    "airport_name": "origin_name",
-    "city": "origin_city"
+    "name": "origin_name",
+    "municipality": "origin_city"
 }).drop(columns=["iata_code"])
 
 # Merge for DEST
@@ -88,8 +106,8 @@ route_summary = route_summary.merge(
     right_on="iata_code",
     how="left"
 ).rename(columns={
-    "airport_name": "dest_name",
-    "city": "dest_city"
+    "name": "dest_name",
+    "municipality": "dest_city"
 }).drop(columns=["iata_code"])
 
 route_summary["ROUTE_LABEL"] = (
@@ -98,47 +116,17 @@ route_summary["ROUTE_LABEL"] = (
     route_summary["dest_city"] + " (" + route_summary["DEST"] + ")"
 )
 
-# -----------------------------
-# Sidebar Filter
-# -----------------------------
+route_options = sorted(route_summary["ROUTE_LABEL"].dropna().unique())
 
-st.sidebar.header("Filters")
-
-min_obs = st.sidebar.slider(
-    "Minimum observations per route",
-    min_value=1,
-    max_value=int(route_summary["num_observations"].max()),
-    value=10
-)
-
-filtered_routes = route_summary[
-    route_summary["num_observations"] >= min_obs
-].copy()
-
-#route_options = sorted(filtered_routes["ROUTE_LABEL"].unique())
-route_options = sorted(filtered_routes["ROUTE_LABEL"].dropna().unique())
-
-if len(route_options) < 2:
-    st.warning("Not enough routes meet the minimum threshold.")
-    st.stop()
-
-
-# -----------------------------
-# Tabs
-# -----------------------------
-
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3 = st.tabs([
     "Overview",
     "Route Comparison",
-    "AI Insight Generator",
-    "Data Table"
+    "AI Route Summary",
 ])
 
 
-# -----------------------------
-# Tab 1: Overview
-# -----------------------------
 
+# TAB 1: OVERVIEW
 with tab1:
     st.header("Overview")
 
@@ -146,38 +134,67 @@ with tab1:
 
     col1.metric("Total Observations", f"{route_summary['num_observations'].sum():,}")
     col2.metric("Unique Routes", f"{route_summary['ROUTE_LABEL'].nunique():,}")
-    col3.metric("Average Fare", f"${route_summary['avg_fare'].mean():.2f}")
-    col4.metric("Average Distance", f"{route_summary['avg_distance'].mean():.0f} mi")
+    col3.metric("Average Fare ($)", f"${route_summary['avg_fare'].mean():.2f}")
+    col4.metric("Average Distance (miles)", f"{route_summary['avg_distance'].mean():.0f} mi")
 
+
+    ## FARE VS DISTANCE PLOT
     st.subheader("Fare vs Distance")
 
-    fig_scatter = px.scatter(
-        filtered_routes,
-        x="avg_distance",
-        y="avg_fare",
-        size="num_observations",
-        color="avg_fare",
-        hover_name="ROUTE_LABEL",
-        hover_data={
-            "avg_distance": ":.0f",
-            "avg_fare": ":.2f",
-            "median_fare": ":.2f",
-            "min_fare": ":.2f",
-            "max_fare": ":.2f",
-            "num_observations": True
-        },
-        labels={
-            "avg_distance": "Distance (miles)",
-            "avg_fare": "Average Fare ($)"
-        },
-        title="Average Fare vs Distance"
-    )
+    plot_col, filter_col = st.columns([4, 1])
 
-    st.plotly_chart(fig_scatter, use_container_width=True)
 
+    with filter_col:
+        obs_filter = st.slider(
+            "Minimum observations",
+            min_value=10,
+            max_value=int(route_summary["num_observations"].max()),
+            value=10
+        )
+
+    plot_df = route_summary[
+        route_summary["num_observations"] >= obs_filter
+    ].copy()
+
+    with plot_col:
+        fig_scatter = px.scatter(
+            plot_df,
+            x="avg_distance",
+            y="avg_fare",
+            size="num_observations",
+            size_max=25,
+            color="avg_fare",
+            opacity=0.9,
+            hover_name="ROUTE_LABEL",
+            hover_data={
+                "avg_distance": ":.0f",
+                "avg_fare": ":.2f",
+                "median_fare": ":.2f",
+                "min_fare": ":.2f",
+                "max_fare": ":.2f",
+                "num_observations": True
+            },
+            labels={
+                "avg_distance": "Distance (miles)",
+                "avg_fare": "Average Fare ($)"
+            },
+            title=f"Average Fare vs Distance | Min Observations: {obs_filter}"
+        )
+
+        fig_scatter.update_traces(
+            marker=dict(
+                opacity=0.9,
+                line=dict(width=0.4, color="gray")
+            )
+        )
+
+        st.plotly_chart(fig_scatter, use_container_width=True)
+
+
+    ## TOP 15 MOST EXPENSIVE ROUTES BAR PLOT
     st.subheader("Top 15 Most Expensive Routes")
 
-    top_expensive = filtered_routes.sort_values("avg_fare", ascending=False).head(15)
+    top_expensive = route_summary.sort_values("avg_fare", ascending=False).head(15)
 
     fig_bar = px.bar(
         top_expensive,
@@ -196,10 +213,8 @@ with tab1:
     st.plotly_chart(fig_bar, use_container_width=True)
 
 
-# -----------------------------
-# Tab 2: Route Comparison
-# -----------------------------
 
+## TAB 2: ROUTE COMPARISON
 with tab2:
     st.header("Route Comparison")
 
@@ -211,8 +226,8 @@ with tab2:
     with col2:
         route_b = st.selectbox("Route B", route_options, index=1)
 
-    row_a = filtered_routes[filtered_routes["ROUTE_LABEL"] == route_a].iloc[0]
-    row_b = filtered_routes[filtered_routes["ROUTE_LABEL"] == route_b].iloc[0]
+    row_a = route_summary[route_summary["ROUTE_LABEL"] == route_a].iloc[0]
+    row_b = route_summary[route_summary["ROUTE_LABEL"] == route_b].iloc[0]
 
     comparison_df = pd.DataFrame({
         "Metric": [
@@ -262,9 +277,7 @@ with tab2:
     st.plotly_chart(fig_compare, use_container_width=True)
 
 
-# -----------------------------
-# Tab 3: AI Insight Generator
-# -----------------------------
+## TAB 3: AI ROUTE SUMMARY GENERATOR
 
 def generate_ai_explanation(route_a, route_b, row_a, row_b):
     prompt = f"""
@@ -281,7 +294,10 @@ Median fare: ${row_b['median_fare']:.2f}
 Distance: {row_b['avg_distance']:.0f} miles
 
 Explain whether higher price is related to longer distance.
-Keep it concise and analytical.
+
+Provide a recommendation to the user for which route they should take and why.
+
+Do not use "Route A" or "Route B" in your response. Use the actual name of the inputted route. 
 """
 
     try:
@@ -299,30 +315,20 @@ Keep it concise and analytical.
 
 
 with tab3:
-    st.header("AI Insight Generator")
+    st.header("AI Route Summary")
 
-    route_a = st.selectbox("AI Route A", route_options, key="ai_a")
-    route_b = st.selectbox("AI Route B", route_options, key="ai_b", index=1)
+    st.write(
+    "Choose the two routes you want to compare and click the button to receive an AI-generated recommendation on which flight route is better. ")
 
-    row_a = filtered_routes[filtered_routes["ROUTE_LABEL"] == route_a].iloc[0]
-    row_b = filtered_routes[filtered_routes["ROUTE_LABEL"] == route_b].iloc[0]
+    route_a = st.selectbox("Route 1", route_options, key="ai_a")
+    route_b = st.selectbox("Route 2", route_options, key="ai_b", index=1)
 
-    if st.button("Generate Insight"):
+    row_a = route_summary[route_summary["ROUTE_LABEL"] == route_a].iloc[0]
+    row_b = route_summary[route_summary["ROUTE_LABEL"] == route_b].iloc[0]
+
+    if st.button("Generate Route Summary"):
         st.markdown(generate_ai_explanation(route_a, route_b, row_a, row_b))
 
-
-# -----------------------------
-# Tab 4: Data Table
-# -----------------------------
-
-with tab4:
-    st.header("Route Summary Table")
-
-    st.dataframe(filtered_routes, use_container_width=True)
-
-    st.download_button(
-        "Download CSV",
-        filtered_routes.to_csv(index=False),
-        "routes.csv",
-        "text/csv"
+    st.write(
+    "NOTE: the following recommendation is based on real data, but it is AI-generated and should not be considered as professional advice. Always contact an airline or airport directly for the most accurate, up-to-date information."
     )
