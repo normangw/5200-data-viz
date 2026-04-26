@@ -1,0 +1,45 @@
+# --- Figure ---
+figure.figsize: 12, 6
+figure.dpi: 100
+figure.facecolor: "#ffffff"
+
+# --- Axes ---
+axes.facecolor: "#ffffff"
+axes.edgecolor: "#dddddd"
+axes.linewidth: 0.8
+axes.grid: False
+axes.titlesize: 16
+axes.titleweight: bold
+axes.labelsize: 12
+axes.labelcolor: "#333333"
+
+# --- Grid ---
+grid.color: "#e6e6e6"
+grid.linestyle: -
+grid.linewidth: 0.8
+grid.alpha: 0.8
+
+# --- Ticks ---
+xtick.color: "#444444"
+ytick.color: "#444444"
+xtick.labelsize: 10
+ytick.labelsize: 10
+
+# --- Font ---
+font.family: sans-serif
+font.sans-serif: DejaVu Sans, Arial, Helvetica
+text.color: "#333333"
+
+# --- Lines ---
+lines.linewidth: 2
+
+# --- Patch / bars ---
+patch.edgecolor: "#444444"
+
+# --- Legend ---
+legend.frameon: False
+legend.fontsize: 10
+
+# --- Savefig ---
+savefig.bbox: tight
+savefig.facecolor: "#ffffff"
