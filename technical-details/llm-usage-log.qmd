@@ -9,3 +9,7 @@ title: "LLM usage log"
 * Assist in color theming
 * Assist in debugging code for visualizatins
 
+
+## Writing
+
+* Write BibTeX citation for references.bib for necessary sources
