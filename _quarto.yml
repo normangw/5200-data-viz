@@ -13,7 +13,7 @@ project:
 
 website:
   title: "Distance Doesn't Explain Price"
-  favicon: "assets/gu-logo.png"
+  favicon: "assets/logo.png"
   navbar:
     left:
       - href: report/report.qmd
@@ -25,7 +25,7 @@ website:
           - text: Data Cleaning
             href: technical-details/data-cleaning/dataclean.ipynb
           - text: Exploratory Data Analysis
-            href: technical-details/eda/eda.ipynb
+            href: technical-details/eda/data_exploration.ipynb
           - text: Linked View (Norman)
             href: technical-details/story/interactive_viz_2.ipynb
           - text: Static Visualization 1
