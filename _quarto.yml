@@ -5,8 +5,8 @@ project:
     - assets/data
   render:
     - "*.qmd"
-    #- "*.ipynb"
-    #- "!xtra"
+    - "technical-details/**/*.ipynb"
+    - "!xtra"
 
 website:
   title: "Distance Doesn't Explain Price"
@@ -21,20 +21,23 @@ website:
         text: Report
       - text: "Technical Details"
         menu:
-          # - text: Data Cleaning
-          #   href: technical-details/data-cleaning/dataclean.ipynb
-          # - text: Exploratory Data Analysis
-          #   href: technical-details/eda/eda.ipynb
-          # - text: Analysis & Story
-          #   href: technical-details/story/main.ipynb
-           - text: Static Visualization 1
-             href: technical-details/story/static_viz_1.ipynb
-           - text: Progress Log
-             href: technical-details/progress-log.qmd
-           - text: LLM Usage Log
-             href: technical-details/llm-usage-log.qmd
+          - text: Data Cleaning
+            href: technical-details/data-cleaning/dataclean.ipynb
+          - text: Exploratory Data Analysis
+            href: technical-details/eda/eda.ipynb
+          - text: Analysis & Story
+            href: technical-details/story/main.ipynb
+          - text: Linked View (Norman)
+            href: technical-details/story/interactive_viz_2.ipynb
+          - text: Static Visualization 1
+            href: technical-details/story/static_viz_1.ipynb
+          - text: "---"
+          - text: Progress Log
+            href: technical-details/progress-log.qmd
+          - text: LLM Usage Log
+            href: technical-details/llm-usage-log.qmd
 
 format:
   html:
-    theme: cosmo
+    theme: yeti
     toc: true
