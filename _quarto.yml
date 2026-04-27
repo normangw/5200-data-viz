@@ -5,7 +5,10 @@ project:
     - assets/data
   render:
     - "*.qmd"
+    - "report/*.qmd"
+    - "technical-details/**/*.qmd"
     - "technical-details/**/*.ipynb"
+    - "logs/*.qmd"
     - "!xtra"
 
 website:
@@ -32,10 +35,12 @@ website:
           - text: T-Test
             href: technical-details/story/t_test.ipynb
           - text: "---"
+          - text: Technical Appendix
+            href: technical-details/appendix.qmd
           - text: Progress Log
-            href: technical-details/progress-log.qmd
+            href: logs/progress-log.qmd
           - text: LLM Usage Log
-            href: technical-details/llm-usage-log.qmd
+            href: logs/llm-usage-log.qmd
 
 format:
   html:

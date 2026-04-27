@@ -1,0 +1,86 @@
+---
+title: "Technical Appendix"
+format:
+  html:
+    theme: yeti
+    toc: true
+---
+
+This appendix is written for a data scientist audience and documents the methodology, data pipeline, and analytical decisions behind the visualizations in the main report.
+
+## Data Sources
+
+| Source | Description | Coverage |
+|---|---|---|
+| BTS DB1B Market | Airline origin-destination survey, 10% sample of all tickets | Q3 2024 – Q2 2025 |
+| BTS Form 41 P6 | Carrier-level operating financials (fuel, salaries, landing fees) | Q3 2024 – Q2 2025 |
+| BTS T100 Segment | Aircraft type per route segment | Q3 2024 – Q2 2025 |
+| OurAirports | Airport lat/lon coordinates | Static |
+
+Raw data files are git-ignored due to size. The cleaned dataset (`T_DB1B_MARKET_CLEAN.csv`) has 25 million rows and 23 columns.
+
+## Data Cleaning
+
+See [`data-cleaning/dataclean.ipynb`](data-cleaning/dataclean.ipynb) for full code.
+
+**Steps:**
+
+1. Four quarterly DB1B Market CSVs merged and deduplicated
+2. Airport lat/lon joined from OurAirports on IATA code
+3. Bulk fare records (`BULK_FARE == 1`) retained; no fare filters applied
+4. P6 financial data joined on `TICKET_CARRIER + YEAR + QUARTER` — required groupby aggregation first (377 raw rows → 190 unique carrier-quarter combinations) to avoid many-to-many explosion
+5. T100 aircraft type joined on `ORIGIN + DEST + REPORTING_CARRIER + YEAR + QUARTER` using modal aircraft type per route; reversed-route fallback for unmatched segments (~43% null due to connecting itineraries)
+
+**Known nulls:**
+
+- `AIRCRAFT_FUEL`, `SALARIES_BENEFITS`, `LANDING_FEES`: ~1.5% null (carriers not in P6)
+- `AIRCRAFT_TYPE`: ~43% null (connecting itineraries don't match T100 direct segments)
+
+## HHI Computation
+
+The Herfindahl-Hirschman Index (HHI) measures market concentration per route:
+
+$$HHI = \sum_{i=1}^{n} s_i^2 \times 10{,}000$$
+
+where $s_i$ is carrier $i$'s passenger share on the route.
+
+Routes were normalized so ATL→JFK and JFK→ATL are treated as the same market. Only routes with at least 1,000 total passengers were included to reduce noise from thin markets.
+
+- HHI < 1,500: Competitive market
+- HHI 1,500–2,500: Moderately concentrated
+- HHI > 2,500: Highly concentrated (monopoly/duopoly)
+
+Airport-level HHI used in the linked view is the average HHI across all routes originating from that airport.
+
+## Carrier Count per Airport
+
+For the scatter visualization (fewer carriers → higher fares), carrier count per airport was derived from `airport_carriers.json`, which counts unique `TICKET_CARRIER` values per origin airport across all quarters. Average fare is the mean `MARKET_FARE` for all departing itineraries.
+
+## Regression Results
+
+Route-level OLS regression on average fare:
+
+| Model | R² |
+|---|---|
+| Distance only | 0.454 |
+| HHI only | 0.151 |
+| Distance + HHI | 0.495 |
+
+Distance explains ~45% of fare variance at the route level. Adding HHI improves fit by ~4 percentage points, confirming that market power has a statistically significant but modest effect above and beyond distance.
+
+Unit of analysis is the route (origin-destination pair), not the individual ticket, which reduces noise from outlier fares.
+
+## Linked View
+
+The linked view (`story/interactive_viz_2.ipynb`) uses Plotly's `plotly_click` event to pass airport identity from the map div to the scatter div via `Plotly.restyle`. The map is a `Scattergeo` with Albers USA projection; the scatter plots average departing fare vs. carrier count with a Pearson correlation annotation.
+
+The Altair-based linked view (`story/linked_view.ipynb`) uses `selection_point` on airport code, shared bidirectionally between the choropleth map and the HHI vs. fare scatter. Clicking either chart highlights the selected airport in both.
+
+## Notebooks
+
+- [Data Cleaning](data-cleaning/dataclean.ipynb)
+- [Interactive Viz 2 — Carrier Count vs. Fare](story/interactive_viz_2.ipynb)
+- [Linked View — HHI vs. Fare](story/linked_view.ipynb)
+- [Static Visualization 1](story/static_viz_1.ipynb)
+- [Linear Regression](story/linear_reg.ipynb)
+- [T-Test](story/t_test.ipynb)
