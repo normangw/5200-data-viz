@@ -90,6 +90,10 @@ When fewer airlines compete at an airport, fares tend to be higher. Each dot bel
 
 ## Infographic
 
+Double marginalization occurs when a manufacturer and a retailer both mark up the price of a product, leading to higher prices for consumers. In the airline industry, this can happen when airlines sell tickets through a third-party flight operator that also take a commission/contact fee. The infographic below illustrates this concept in the context of airline pricing.
+
+![Airline Pricing Infographic](images/infographic.png)
+
 ## Flight Price & Route Explorer
 
 To view the Flight Price & Route Explorer, click the button below. 
