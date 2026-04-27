@@ -1,0 +1,15 @@
+---
+title: "LLM usage log"
+---
+
+
+## Code
+
+* Assist in CSS styling on Streamlit App
+* Assist in color theming
+* Assist in debugging code for visualizatins
+
+
+## Writing
+
+* Write BibTeX citation for references.bib for necessary sources

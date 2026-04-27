@@ -1,0 +1,58 @@
+---
+title: "Progress log"
+---
+
+## To-do
+
+* [x] Explore possible topics / look for potential datasets/sources
+* [x] Finalize topic 
+* [x] Data collection and cleaning
+* [x] Initial EDA and data visualizations
+* [x] Static plots
+* [x] Interactive plots
+* [x] Infographic
+* [x] Optional Gen AI
+* [x] Put together report
+* [x] Final edits
+
+
+## Akshay Arun
+
+[About Akshay](../site_pages/about.qmd#aksha-arun)
+
+**Project contributions**
+
+* Project planning and organization
+
+* Linked view visualization
+
+* Infographic
+
+* Static plots (multivariate linear regression)
+
+
+## Alexa Nakanishi
+
+[About Alexa](../site_pages/about.qmd#alexa-nakanishi)
+
+**Project contributions**
+
+* Initial plot visualizations
+
+* Static plots
+
+* Interactive visualizations (folium map)
+
+* Streamlit app with Gen AI component
+
+* Initial report outline
+
+## Norman Wang
+
+[About Norman](../site_pages/about.qmd#norman-wang)
+
+**Project contributions**
+
+* Data collection and cleaning
+
+* Initial EDA and plot visualizations

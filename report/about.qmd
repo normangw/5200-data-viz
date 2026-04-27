@@ -1,0 +1,39 @@
+# About Us
+
+## Akshay Arun {#akshay-arun}
+
+<img src="images/about-images/IMG_2706.jpeg" style="float:left; width:270px; margin-right:15px;">
+
+Akshay Arun is a Second-Year student in the Data Science and Analytics (DSAN) Program at Georgetown University. He is a Student Ambassador and Social Media assistant for the DSAN program. He has Bachelor of Arts Degree in Economics from Georgetown, having graduating in the Spring of 2025 with a minor in Computer Science. During his time as an undergraduate student, he established a Social Justice Organization HoyaCodes, which provides free coding education to public schools in underprivelleged areas DC that don't have access to a formalized Computer Science curriculum. 
+
+Akshay is interested in various data science fields such as Deep Learning with Neural Networks and overall statistical modeling, and has interest in several research topics such as social network modeling and business analytics. He hopes to combine his undergraduate and graduate education to create meaningful impact in the field of business through machine learning-based and consumer analyses.
+
+### Education:
+* 2026: MS in Data Science & Analytics, Georgetown University
+* 2025: BA in Economics, Minor in Computer Science, Georgetown University
+
+## Alexa Nakanishi {#alexa-nakanishi}
+
+<img src="images/about-images/Alexa Nakanishi Headshot 2025.jpg" style="float:left; width:270px; margin-right:15px;">
+
+
+Alexa Nakanishi is a senior in the College of Arts & Sciences at Georgetown University, double majoring in Mathematics and Justice & Peace Studies, and doing an accelerated masters in the Data Science & Analytics program. At Georgetown, she is a scholar with the Massive Data Institute at the McCourt School of Public Policy, doing research with the Edunomics Lab, a research center dedicated to exploring and modeling complex education fiscal decisions and growing the capacity of education leaders on the topic of education finance. She is also the Co-Chair of the Senior Class Fund and on the Women's Ultimate Frisbee Team. In her free time, she enjoys baking, running, and exploring DC's restaurant scene. 
+
+Alexa is interested in a variety of research topics in the social sciences such as education and gender-based violence. She is particularly interested in the work and research done in non-profit spaces. Alexa hopes to combine her degrees (Mathematics, Justice & Peace Studies, and Data Science & Analytics) to do meaningful data science and analytics research in these social science areas.
+
+### Education:
+* 2027: MS in Data Science & Analytics, Georgetown University
+* 2026: BA in Mathematics and Justice & Peace Studies, Georgetown University
+
+
+## Norman Wang {#norman-wang}
+
+<img src="images/about-images/Alexa Nakanishi Headshot 2025.jpg" style="float:left; width:270px; margin-right:15px;">
+
+Norman Wang is a senior in the College of Arts & Sciences at Georgetown University, majoring in International Economics, and doing an accelerated master’s in the Data Science & Analytics program. He has a strong focus on empirical analysis, antitrust and competition, and industrial organization. He has hands-on experience in economic consulting, where he has worked on cases involving price-fixing, cartels, consumer utilities, and damages analysis using large-scale datasets under leading economic experts. He is passionate about applying data science to real-world problems, particularly in the realm of competition and market dynamics.
+
+### Education:
+* 2027: MS in Data Science & Analytics, Georgetown University
+* 2026: BA in International Economics, Georgetown University
+
+
