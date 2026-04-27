@@ -9,6 +9,8 @@ from groq import Groq
 
 # api key load
 def load_api_key() -> str:
+    if "groq" in st.secrets:
+        return st.secrets["groq"]
     with open(os.path.expanduser("~/.api-keys.json")) as f:
         return json.load(f)["groq-final"]
 
