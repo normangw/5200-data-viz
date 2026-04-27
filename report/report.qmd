@@ -15,9 +15,12 @@ execute:
   message: false
 ---
 
+Have you ever felt like airline ticket prices have surged after you start researching flights? Do flight fares and the distance you are flying ever not make logical sense? 
+
+
 ![](images/jetblue-tweet.png){fig-cap="Deleted JetBlue Tweet. Source: https://x.com/CultureCrave/status/2046631236941295920"}
 
-In a now deleted tweet, JetBlue has, it seems, admitted to surveillance pricing. Surveillance pricing, also known as “personalized algorithmic pricing”, is a tactic used by companies where prices change dynamically based on the data of individual consumers. While federal-level investigations by the Federal Trade Commission into surveillance pricing have approached a standstill, many states have begun cracking down on it. In fact, Maryland is on track to become the first state to ban surveillance pricing for groceries. Yet, surveillance pricing may be true and real for airlines.
+In a now deleted tweet, JetBlue has, it seems, admitted to surveillance pricing. Surveillance pricing, also known as “personalized algorithmic pricing”, is a tactic used by companies where prices change dynamically based on the data of individual consumers. [@barton_surveillance_pricing] While federal-level investigations by the Federal Trade Commission into surveillance pricing have approached a standstill, many states have begun cracking down on it. In fact, Maryland is on track to become the first state to ban surveillance pricing for groceries. [@npr_surveillance_pricing_maryland] Yet, surveillance pricing may be true and real for airlines.
 
 :::: {.columns}
 
@@ -35,20 +38,26 @@ In a now deleted tweet, JetBlue has, it seems, admitted to surveillance pricing.
 
 ::::
 
-Since the deleted tweet, a lawsuit has been filed against JetBlue for collecting consumer data without consent and using such data to set ticket prices, and others have taken to social media to express their thoughts and frustrations with the airline system in the United States.
+Since the deleted tweet, a lawsuit has been filed against JetBlue for collecting consumer data without consent and using such data to set ticket prices, and others have taken to social media to express their thoughts and frustrations with the airline system in the United States [@cbs_jetblue_surveillance_pricing].
 
 
-Yet buying plane tickets has always been more complicated than simply buying your groceries. Even before this scandal, there still existed tips and tricks on how to ‘game’ the system to get the cheapest airline tickets possible. There exist influencers on social media whose entire brand is built around this. 
+Buying plane tickets has always been more complicated than simply buying your groceries. Even before this scandal, there still existed tips and tricks on how to ‘game’ the system to get the cheapest airline tickets possible. Influencers on social media have entire brands that are built around this. 
 
 ![](images/instagram.PNG){width="25%" fig-align="center"} 
 
 
-Do flight prices truly vary so randomly? What does the data actually say?
+But, do flight prices truly vary so randomly? What does the data actually say? See the following visualizations below to learn about the relationship between flight fares and prices. 
+
+This data visualization project uses data from ___(to be filled in by norman later)__
 
 
 ## Flight Fare by Distance and Flight Fare by Route
 
+How strongly is your airline ticket price related to the distance of the flight? Unsurprisingly, longer flights tend to have higher median flight prices. But perhaps surprisingly, the median price of a flight that covers a distance of 100-500 miles is only slightly higher than the median price of a flight that covers the distance of 2300-4200 miles. 
+
 ![](images/static_viz_1.png)
+
+What about your flight fare and the airlines you fly out of and into. Looking at the top 10 most popular routes, we see that depending on the route you fly, your airline ticket can vary vastly. For example, if you fly from the San Francisco International Airport (SFO) to the San Diego International Airport (SAN), you could expect the price of your flight to fall within a relatively narrow range. But, if you fly from John F Kennedy International Airport (JFK) in New York to Los Angeles International Airport (LAX), the price of your flight could be as cheap as $250, but also as expensive as almost $2000. 
 
 
 ![](images/static_viz_2.png)
