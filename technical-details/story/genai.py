@@ -84,11 +84,12 @@ def load_data(file_path):
     return df
 
 
-DATA_PATH = '../../assets/data/route_summary.csv'
+_HERE = os.path.dirname(os.path.abspath(__file__))
+DATA_PATH = os.path.join(_HERE, "../../assets/data/route_summary.csv")
 route_summary = load_data(DATA_PATH)
 
 
-airport_df = pd.read_csv("../../assets/data/airport-codes.csv")
+airport_df = pd.read_csv(os.path.join(_HERE, "../../assets/data/airport-codes.csv"))
 
 # Merge for ORIGIN
 route_summary = route_summary.merge(
