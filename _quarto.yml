@@ -13,24 +13,24 @@ website:
   favicon: "assets/gu-logo.png"
   navbar:
     left:
-      - href: index.qmd
-        text: Home
-      - href: report/about.qmd
-        text: About Us
       - href: report/report.qmd
         text: Report
+      - href: report/about.qmd
+        text: About Us
       - text: "Technical Details"
         menu:
           - text: Data Cleaning
             href: technical-details/data-cleaning/dataclean.ipynb
           - text: Exploratory Data Analysis
             href: technical-details/eda/eda.ipynb
-          - text: Analysis & Story
-            href: technical-details/story/main.ipynb
           - text: Linked View (Norman)
             href: technical-details/story/interactive_viz_2.ipynb
           - text: Static Visualization 1
             href: technical-details/story/static_viz_1.ipynb
+          - text: Linear Regression
+            href: technical-details/story/linear_reg.ipynb
+          - text: T-Test
+            href: technical-details/story/t_test.ipynb
           - text: "---"
           - text: Progress Log
             href: technical-details/progress-log.qmd
