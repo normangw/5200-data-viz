@@ -6,3 +6,4 @@
 /.claude/
 
 **/*.quarto_ipynb
+**/.DS_Store
