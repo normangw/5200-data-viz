@@ -2,5 +2,7 @@
 /_site/
 /data/
 /CLAUDE.md
+/.vscode/
+/.claude/
 
 **/*.quarto_ipynb
