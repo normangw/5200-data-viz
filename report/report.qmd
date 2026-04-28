@@ -8,7 +8,7 @@ format:
     toc: true
     fig-width: 9
     fig-height: 5
-citeproc: false
+bibliography: ../assets/references.bib
 execute:
   echo: false
   warning: false
@@ -20,7 +20,7 @@ Have you ever felt like airline ticket prices have surged after you start resear
 
 ![](images/jetblue-tweet.png){fig-cap="Deleted JetBlue Tweet. Source: https://x.com/CultureCrave/status/2046631236941295920"}
 
-In a now deleted tweet, JetBlue has, it seems, admitted to surveillance pricing. Surveillance pricing, also known as “personalized algorithmic pricing”, is a tactic used by companies where prices change dynamically based on the data of individual consumers. [@barton_surveillance_pricing] While federal-level investigations by the Federal Trade Commission into surveillance pricing have approached a standstill, many states have begun cracking down on it. In fact, Maryland is on track to become the first state to ban surveillance pricing for groceries. [@npr_surveillance_pricing_maryland] Yet, surveillance pricing may be true and real for airlines.
+In a now deleted tweet, JetBlue has, it seems, admitted to surveillance pricing. Surveillance pricing, also known as “personalized algorithmic pricing”, is a tactic used by companies where prices change dynamically based on the data of individual consumers [@barton_surveillance_pricing]. While federal-level investigations by the Federal Trade Commission into surveillance pricing have approached a standstill, many states have begun cracking down on it. In fact, Maryland is on track to become the first state to ban surveillance pricing for groceries [@npr_surveillance_pricing_maryland]. Yet, surveillance pricing may be true and real for airlines.
 
 :::: {.columns}
 
