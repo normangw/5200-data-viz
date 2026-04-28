@@ -14,7 +14,7 @@ Akshay is interested in various data science fields such as Deep Learning with N
 
 ## Alexa Nakanishi {#alexa-nakanishi}
 
-<img src="images/about-images/Alexa Nakanishi Headshot 2025.jpg" style="float:left; width:270px; margin-right:15px;">
+<img src="images/about-images/alexa.jpg" style="float:left; width:270px; margin-right:15px;">
 
 
 Alexa Nakanishi is a senior in the College of Arts & Sciences at Georgetown University, double majoring in Mathematics and Justice & Peace Studies, and doing an accelerated masters in the Data Science & Analytics program. At Georgetown, she is a scholar with the Massive Data Institute at the McCourt School of Public Policy, doing research with the Edunomics Lab, a research center dedicated to exploring and modeling complex education fiscal decisions and growing the capacity of education leaders on the topic of education finance. She is also the Co-Chair of the Senior Class Fund and on the Women's Ultimate Frisbee Team. In her free time, she enjoys baking, running, and exploring DC's restaurant scene. 
