@@ -30,6 +30,8 @@ title: "Progress log"
 
 * Static plots (multivariate linear regression)
 
+* Report write ups and editing
+
 
 ## Alexa Nakanishi
 
@@ -47,6 +49,9 @@ title: "Progress log"
 
 * Initial report outline
 
+* Report write ups and editing
+
+
 ## Norman Wang
 
 [About Norman](../site_pages/about.qmd#norman-wang)
@@ -56,3 +61,7 @@ title: "Progress log"
 * Data collection and cleaning
 
 * Initial EDA and plot visualizations
+
+* Interactive visualizations (scatterplot)
+
+* Report write ups and editing
