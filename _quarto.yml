@@ -12,7 +12,7 @@ project:
     - "!xtra"
 
 website:
-  title: "Distance Doesn't Explain Price"
+  title: "Distance Does Not Explain Price"
   favicon: "assets/logo.png"
   navbar:
     left:
@@ -26,14 +26,16 @@ website:
             href: technical-details/data-cleaning/dataclean.ipynb
           - text: Exploratory Data Analysis
             href: technical-details/eda/data_exploration.ipynb
-          - text: Linked View (Norman)
+          - text: Linked View
             href: technical-details/story/interactive_viz_2.ipynb
-          - text: Static Visualization 1
+          - text: Static Visualizations
             href: technical-details/story/static_viz_1.ipynb
           - text: Linear Regression
             href: technical-details/story/linear_reg.ipynb
           - text: T-Test
             href: technical-details/story/t_test.ipynb
+          - text: Streamlit App
+            href: technical-details/story/genai.qmd
           - text: "---"
           - text: Technical Appendix
             href: technical-details/appendix.qmd
