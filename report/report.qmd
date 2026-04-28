@@ -105,9 +105,9 @@ Double marginalization occurs when a manufacturer and a retailer both mark up th
 
 ## Flight Price & Route Explorer
 
-To view the Flight Price & Route Explorer, click the button below. 
+The Flight Price & Route Explorer page enables users to compare flight prices and distance for different flight routes. This application also provides an AI-generated flight summary and route recommendation to help users pick the best route option. To view the Flight Price & Route Explorer, click the button below. 
 
-[View Interactive Map](https://5200-data-viz.streamlit.app/){.btn .btn-primary target="_blank"}
+[View Flight Price & Route Explorer](https://5200-data-viz.streamlit.app/){.btn .btn-primary target="_blank"}
 
 # Conclusion
 
