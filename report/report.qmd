@@ -51,24 +51,38 @@ But, do flight prices truly vary so randomly? What does the data actually say? S
 This data visualization project uses data from the Bureau of Transportation Statistics (BTS) DB1B Market survey, covering US domestic airline routes from Q3 2024 to Q2 2025, with over 25 million ticketing records.
 
 
-## Flight Fare by Distance and Flight Fare by Route
+## Flight Fare by Distance
 
-How strongly is your airline ticket price related to the distance of the flight? Unsurprisingly, longer flights tend to have higher median flight prices. But perhaps surprisingly, the median price of a flight that covers a distance of 100-500 miles is only slightly higher than the median price of a flight that covers the distance of 2300-4200 miles. 
+How strongly is your airline ticket price related to the distance of the flight? 
+
+Unsurprisingly, longer flights tend to have higher median flight prices. But perhaps surprisingly, as the length of your flight increases, the median ticket price of the flight does not increase dramatically. Viewing the farthest left boxplot and the farthest right boxplot, the median price of a flight that covers a distance of 100-500 miles is only slightly higher than the median price of a flight that covers the distance of 2300-4200 miles. 
+
+We also see that while the range of these flight fares increases as the distance you fly increases, the minimum ticket price of each distance group is the equal across all distance groups. In other words, a the cheapest ticket price for a flight that is 100-500 miles long and the cheapest ticekt price for a flight that is 2300-4200 miles long could actually be the same.
 
 ![](images/static_viz_1.png)
 
-What about your flight fare and the airlines you fly out of and into. Looking at the top 10 most popular routes, we see that depending on the route you fly, your airline ticket can vary vastly. For example, if you fly from the San Francisco International Airport (SFO) to the San Diego International Airport (SAN), you could expect the price of your flight to fall within a relatively narrow range. But, if you fly from John F Kennedy International Airport (JFK) in New York to Los Angeles International Airport (LAX), the price of your flight could be as cheap as $250, but also as expensive as almost $2000. 
+So, does a longer flight necessarily mean a higher ticket price? Upon a first glance, yes, but certainly there seem to be other factors at play. If higher ticket prices were determined solely by flight distance, the difference in flight fares would vary significantly more than they do here.
 
+## Flight Fare by Route
+
+How strongly are your flight fare and the airlines you fly out of and into related?
+
+Looking at the top 10 most popular routes, we see that depending on the route you fly, your airline ticket can vary vastly. For example, if you fly from the San Francisco International Airport (SFO) to the San Diego International Airport (SAN), you could expect the price of your flight to fall within a relatively narrow range. But, if you fly from John F Kennedy International Airport (JFK) in New York to Los Angeles International Airport (LAX), the price of your flight could be as cheap as $250, but also as expensive as almost $2000. 
 
 ![](images/static_viz_2.png)
 
 
-## What are the most popular flight paths?
 
-The map below shows the top 500 busiest US domestic routes. Line color indicates average fare (darker blue = more expensive) and line thickness reflects total passengers. Hover over any route for details.
+## Visualizing Popular Flight Paths
+
+What are the most popular flight routes in the United States? 
+
+The interactive map below shows the top 200 busiest US domestic routes. Line color indicates average fare, where the darker the blue, the more expensive the fare, and line thickness reflects total passengers, where the thicker the line the more passengers the route has served. Grey dots represent each airport. 
+
+Hover over any route for details on the average fare of the route, the distance of the route, and the total number of passengers that this route has seen.
 
 <iframe
-  src="images/interactive_viz_1.html"
+  src="images/interactive_viz_1-200.html"
   width="100%"
   height="600"
   style="border: none;">
@@ -77,7 +91,7 @@ The map below shows the top 500 busiest US domestic routes. Line color indicates
 
 ## Fewer Carriers, Higher Fares
 
-When fewer airlines compete at an airport, fares tend to be higher. Each dot below is a US airport, sized by passenger volume. The dashed trendline and correlation coefficient confirm the relationship: less competition means higher prices.
+When fewer airlines compete at an airport, fares tend to be higher. Each dot below represents a US airport, sized by passenger volume. The dashed trendline and correlation coefficient confirm this relationship: less competition means higher prices.
 
 <iframe
   src="images/interactive_viz_2.html"
@@ -88,7 +102,7 @@ When fewer airlines compete at an airport, fares tend to be higher. Each dot bel
 
 ## Airport Market Structure: Linked View
 
-The map below shows US airports colored by number of carriers. Click any airport to highlight its position in the scatterplot on the right, which shows HHI (a measure of market concentration) against average fare. Higher HHI means less competition.
+The interactive map below shows US airports colored by number of carriers. Click any airport to highlight its position in the scatterplot on the right, which shows HHI (Herfindahl-Hirschman Index), a measure of market concentration, against average fare. Higher HHI means less competition.
 
 <iframe
   src="images/linked_view.html"
@@ -105,7 +119,9 @@ Double marginalization occurs when a manufacturer and a retailer both mark up th
 
 ## Flight Price & Route Explorer
 
-The Flight Price & Route Explorer page enables users to compare flight prices and distance for different flight routes. This application also provides an AI-generated flight summary and route recommendation to help users pick the best route option. To view the Flight Price & Route Explorer, click the button below. 
+The Flight Price & Route Explorer page was created as a tool to enable users to compare flight prices and distance for different flight routes. This application also provides an AI-generated flight summary and route recommendation to help users pick the best route option for their needs.
+
+To view the Flight Price & Route Explorer, click the button below. 
 
 [View Flight Price & Route Explorer](https://5200-data-viz.streamlit.app/){.btn .btn-primary target="_blank"}
 
