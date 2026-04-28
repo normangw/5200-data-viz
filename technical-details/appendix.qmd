@@ -81,6 +81,7 @@ The Altair-based linked view (`story/linked_view.ipynb`) uses `selection_point` 
 - [Data Cleaning](data-cleaning/dataclean.ipynb)
 - [Interactive Viz 2 — Carrier Count vs. Fare](story/interactive_viz_2.ipynb)
 - [Linked View — HHI vs. Fare](story/linked_view.ipynb)
-- [Static Visualization 1](story/static_viz_1.ipynb)
+- [Static Visualizations](story/static_viz_1.ipynb)
 - [Linear Regression](story/linear_reg.ipynb)
 - [T-Test](story/t_test.ipynb)
+
