@@ -28,7 +28,7 @@ Alexa is interested in a variety of research topics in the social sciences such 
 
 ## Norman Wang {#norman-wang}
 
-<img src="images/about-images/Alexa Nakanishi Headshot 2025.jpg" style="float:left; width:270px; margin-right:15px;">
+<img src="images/about-images/Norman.jpg" style="float:left; width:270px; margin-right:15px;">
 
 Norman Wang is a senior in the College of Arts & Sciences at Georgetown University, majoring in International Economics, and doing an accelerated master’s in the Data Science & Analytics program. He has a strong focus on empirical analysis, antitrust and competition, and industrial organization. He has hands-on experience in economic consulting, where he has worked on cases involving price-fixing, cartels, consumer utilities, and damages analysis using large-scale datasets under leading economic experts. He is passionate about applying data science to real-world problems, particularly in the realm of competition and market dynamics.
 

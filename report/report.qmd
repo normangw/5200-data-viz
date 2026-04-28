@@ -86,7 +86,16 @@ When fewer airlines compete at an airport, fares tend to be higher. Each dot bel
   style="border: none;">
 </iframe>
 
-## Linked View Viz (change header)
+## Airport Market Structure: Linked View
+
+The map below shows US airports colored by number of carriers. Click any airport to highlight its position in the scatterplot on the right, which shows HHI (a measure of market concentration) against average fare. Higher HHI means less competition.
+
+<iframe
+  src="images/linked_view.html"
+  width="100%"
+  height="500"
+  style="border: none;">
+</iframe>
 
 ## Infographic
 
@@ -99,3 +108,7 @@ Double marginalization occurs when a manufacturer and a retailer both mark up th
 To view the Flight Price & Route Explorer, click the button below. 
 
 [View Interactive Map](https://5200-data-viz.streamlit.app/){.btn .btn-primary target="_blank"}
+
+# Conclusion
+
+Distance alone does not explain what you pay for a flight. Market structure matters. Airports served by fewer carriers charge systematically higher fares, and our data confirms this across hundreds of US airports. A flight from Boston to DC can cost more than a transatlantic route of similar distance, simply because one market is dominated by a single carrier. As investigations into surveillance pricing continue and states push for new consumer protections, the data is clear: less competition means higher prices, and that cost is paid by everyday travelers.

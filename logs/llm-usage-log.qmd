@@ -1,15 +1,48 @@
 ---
-title: "LLM usage log"
+title: "LLM Usage Log"
 ---
 
+All AI assistance in this project used **Claude Code** (Anthropic, claude-sonnet-4-6). Per project rules, AI did **not** write any narrative text in the report. All section prose was written by team members.
 
-## Code
+## Code Assistance
 
-* Assist in CSS styling on Streamlit App
-* Assist in color theming
-* Assist in debugging code for visualizatins
+**Data pipeline:**
 
+- Built Section 7 of `dataclean.ipynb` — P6 financial join (carrier/quarter aggregation to avoid OOM) and T100 aircraft type modal join with reversed-route fallback
+- Debugged many-to-many merge issue in P6 join (377 raw rows causing 9×25M shape explosion); fix was `.groupby().sum()` before merge
+- Added drop guard for idempotent re-runs of Section 7 (avoids `_x`/`_y` column suffix conflicts)
+- Generated `airport_carriers.json` and `airport_summary.json` via targeted scripts to avoid full-notebook OOM on 25M-row CSV
 
-## Writing
+**Visualizations:**
 
-* Write BibTeX citation for references.bib for necessary sources
+- Built `technical-details/story/interactive_viz_2.ipynb` (carrier count map + fare scatter with linked JS click interaction)
+- Updated colorscale, added Pearson correlation coefficient and trendline to scatter
+- Added HTML save cell to `linked_view.ipynb` for iframe embedding in report
+- Generated `data/airport_hhi.csv` from `hhi_bubble.json` for use in linked view
+- Fixed Plotly CDN placement in saved HTML (moved to `<head>` to ensure library loads before chart divs initialize)
+
+**Streamlit app (`genai.py`):**
+
+- Fixed `ModuleNotFoundError` by creating `requirements.txt`
+- Fixed API key loading to use `st.secrets` on Streamlit Cloud with local file fallback
+- Fixed `FileNotFoundError` for data paths using `os.path.abspath(__file__)` anchor
+
+**Site configuration:**
+
+- Fixed `_quarto.yml` navbar (removed broken links, added correct notebook paths, set yeti theme)
+- Created `index.qmd` redirect to `report/report.html` as landing page
+- Fixed `.gitignore` (`/CLAUDE.md/` → `/CLAUDE.md`)
+
+## Writing Assistance
+
+- Added concise section descriptions to `report.qmd` for interactive visualizations (not narrative prose — factual captions describing chart axes and interactions)
+- Formatted `about.qmd` for Norman Wang's section to match team member style (user provided all biographical content)
+- Wrote BibTeX citation entries for `references.bib`
+- Wrote this technical appendix (methodology content derived from actual code; not narrative)
+
+## What AI Did Not Write
+
+- Hook and intro paragraphs (JetBlue tweet, surveillance pricing)
+- Section prose describing static visualizations
+- Any conclusions or interpretive claims about the data
+- Norman Wang's biographical content

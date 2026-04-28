@@ -5,12 +5,15 @@ project:
     - assets/data
   render:
     - "*.qmd"
+    - "report/*.qmd"
+    - "technical-details/**/*.qmd"
     - "technical-details/**/*.ipynb"
+    - "logs/*.qmd"
     - "!xtra"
 
 website:
   title: "Distance Doesn't Explain Price"
-  favicon: "assets/gu-logo.png"
+  favicon: "assets/logo.png"
   navbar:
     left:
       - href: report/report.qmd
@@ -22,7 +25,7 @@ website:
           - text: Data Cleaning
             href: technical-details/data-cleaning/dataclean.ipynb
           - text: Exploratory Data Analysis
-            href: technical-details/eda/eda.ipynb
+            href: technical-details/eda/data_exploration.ipynb
           - text: Linked View (Norman)
             href: technical-details/story/interactive_viz_2.ipynb
           - text: Static Visualization 1
@@ -32,10 +35,12 @@ website:
           - text: T-Test
             href: technical-details/story/t_test.ipynb
           - text: "---"
+          - text: Technical Appendix
+            href: technical-details/appendix.qmd
           - text: Progress Log
-            href: technical-details/progress-log.qmd
+            href: logs/progress-log.qmd
           - text: LLM Usage Log
-            href: technical-details/llm-usage-log.qmd
+            href: logs/llm-usage-log.qmd
 
 format:
   html:
