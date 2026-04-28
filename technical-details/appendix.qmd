@@ -74,7 +74,7 @@ Unit of analysis is the route (origin-destination pair), not the individual tick
 
 The linked view (`story/interactive_viz_2.ipynb`) uses Plotly's `plotly_click` event to pass airport identity from the map div to the scatter div via `Plotly.restyle`. The map is a `Scattergeo` with Albers USA projection; the scatter plots average departing fare vs. carrier count with a Pearson correlation annotation.
 
-The Altair-based linked view (`story/linked_view.ipynb`) uses `selection_point` on airport code, shared bidirectionally between the choropleth map and the HHI vs. fare scatter. Clicking either chart highlights the selected airport in both.
+The Altair-based linked view (`story/linked_view.ipynb`) uses `selection_point` on airport code registered at the `hconcat` level. The left panel is an Albers USA projection map of airports colored by carrier count; the right panel is a scatter of HHI vs. average fare with a trendline and R² annotation. Clicking a point in the scatter highlights the corresponding airport on the map. Airport-level HHI is the average HHI across all routes departing from that airport, derived from `hhi_bubble.json`.
 
 ## Notebooks
 
