@@ -1,6 +1,6 @@
 ---
-title: "Distance Does Not Explain Price"
-subtitle: "How airline market power shapes what you pay"
+title: "The Unfairness of Flight Pricing"
+subtitle: "A data-driven look at what really drives airline fares"
 author: "Akshay Arun, Alexa Nakanishi, & Norman Wang"
 format:
   html:
@@ -89,9 +89,9 @@ Hover over any route for details on the average fare of the route, the distance 
 </iframe>
 
 
-## Fewer Carriers, Higher Fares
+## Distance and Fare
 
-When fewer airlines compete at an airport, fares tend to be higher. Each dot below represents a US airport, sized by passenger volume. The dashed trendline and correlation coefficient confirm this relationship: less competition means higher prices.
+Each dot below represents a route (sampled from 25M+ records), sized by passenger volume and colored by HHI, a measure of market concentration where darker means more concentrated. The dashed trendline shows a positive relationship between distance and fare, but the wide spread around the line reveals that distance alone does not tell the whole story. Routes of identical distance can differ by hundreds of dollars depending on how many carriers compete for that market.
 
 <iframe
   src="images/interactive_viz_2.html"
@@ -100,9 +100,13 @@ When fewer airlines compete at an airport, fares tend to be higher. Each dot bel
   style="border: none;">
 </iframe>
 
-## Airport Market Structure: Linked View
+::: {.callout-note}
+**Regression results:** Distance explains roughly **45% of fare variance** (R² = 0.45) at the route level. Adding market concentration (HHI) raises explanatory power to **49.5%** — a modest but statistically significant improvement, confirming that market power pushes fares above what distance alone would predict.
+:::
 
-The interactive map below shows US airports colored by number of carriers. Click any airport to highlight its position in the scatterplot on the right, which shows HHI (Herfindahl-Hirschman Index), a measure of market concentration, against average fare. Higher HHI means less competition.
+## Fewer Carriers, Higher Fares
+
+Airlines set prices based on what the market allows, not just what it costs to fly. When a single carrier dominates a route or airport, it faces little pressure to keep fares competitive. The Herfindahl-Hirschman Index (HHI) measures this concentration: a score near 1 means one carrier controls the market, while a score near 0 means many carriers compete. The interactive map below shows US airports colored by number of carriers. Click any airport to highlight its position in the scatterplot on the right, which plots HHI against average fare.
 
 <iframe
   src="images/linked_view.html"
@@ -111,11 +115,15 @@ The interactive map below shows US airports colored by number of carriers. Click
   style="border: none;">
 </iframe>
 
-## Infographic
+## The Hidden Cost of Intermediary Carriers
 
-Double marginalization occurs when a manufacturer and a retailer both mark up the price of a product, leading to higher prices for consumers. In the airline industry, this can happen when airlines sell tickets through a third-party flight operator that also take a commission/contact fee. The infographic below illustrates this concept in the context of airline pricing.
+When you book a flight, the airline selling you the ticket is not always the airline flying the plane. This separation between ticketing and operating carriers creates an opportunity for double marginalization, where each party marks up the price before it reaches you. The infographic below illustrates how this works and what it costs travelers.
 
 ![Airline Pricing Infographic](images/infographic.png)
+
+::: {.callout-note}
+**Statistical finding:** Across 27M+ records, **86%** of tickets have the same ticket and operating carrier. For the remaining 14%, a bootstrap analysis (n = 1,000 resamples) finds that fares are **$4–$16 higher** when the carriers differ (95% CI: −$16 to −$4 for same-carrier minus different-carrier). This difference is statistically significant (Mann-Whitney U, p < 0.0001), though modest in absolute terms.
+:::
 
 ## Flight Price & Route Explorer
 

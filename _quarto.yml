@@ -12,7 +12,7 @@ project:
     - "!xtra"
 
 website:
-  title: "Distance Does Not Explain Price"
+  title: "The Unfairness of Flight Pricing"
   favicon: "assets/logo.png"
   navbar:
     left:
